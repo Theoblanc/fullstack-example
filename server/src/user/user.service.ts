@@ -1,36 +1,65 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from 'src/mail/mail.service';
+import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly mailService: MailService) {}
+  constructor(
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
+    private readonly mailService: MailService,
+  ) {}
   async create(createUserInput: CreateUserInput) {
     const { name, email, password } = createUserInput;
-    await this.checkUserExists(email);
+    const user = await this.checkUserExists(email);
+
+    if (!user) {
+      throw new UnprocessableEntityException(
+        '해당 이메일로는 가입할 수 없습니다.',
+      );
+    }
 
     // 임시 토큰 TODO: JWT TOKEN 구현 후 연동
     const signupVerifyToken = '123' + new Date();
 
-    await this.save({
+    const tempUser = await this.save({
       name,
       email,
       password,
       signupVerifyToken,
     });
 
-    return 'This action adds a new user';
+    this.sendMemberJoinEmail(email, signupVerifyToken);
+
+    return tempUser;
   }
 
-  private checkUserExists(email: string) {
-    return false; // TODO: DB 연동 후 구현
+  private async checkUserExists(email: string) {
+    return await this.usersRepository.findOne({ email });
   }
 
-  private save({ name, email, password, signupVerifyToken }) {
-    return; // TODO: DB 연동 후 구현
+  private async save({
+    name,
+    email,
+    password,
+    signupVerifyToken,
+  }): Promise<UserEntity> {
+    try {
+      const user: UserEntity = await this.usersRepository.save({
+        name,
+        email,
+        password,
+        signupVerifyToken,
+      });
+
+      return user;
+    } catch (error) {}
   }
 
-  private async sendMemberJoinEmail(email: string, signupVerifyToken: string) {
-    await this.mailService.sendMemberJoinVerification(email, signupVerifyToken);
+  private sendMemberJoinEmail(email: string, signupVerifyToken: string) {
+    this.mailService.sendMemberJoinVerification(email, signupVerifyToken);
   }
 }

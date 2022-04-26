@@ -5,6 +5,8 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from './user/entities/user.entity';
 
 @Module({
   imports: [
@@ -13,6 +15,16 @@ import { UserModule } from './user/user.module';
       autoSchemaFile: join(process.cwd(), 'schema.gql'),
       sortSchema: true,
       path: '/api/graphql',
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'fullstack_example_db',
+      port: 5432,
+      username: 'postgres',
+      password: 'postgres',
+      database: 'fullstack',
+      entities: [UserEntity],
+      synchronize: true,
     }),
     UserModule,
   ],
