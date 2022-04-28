@@ -1,8 +1,14 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AuthService } from 'src/auth/auth.service';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
+import { LoginInput } from './dto/login.input';
 import { UserEntity } from './entities/user.entity';
 
 @Injectable()
@@ -11,6 +17,7 @@ export class UserService {
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
     private readonly mailService: MailService,
+    private readonly authService: AuthService,
   ) {}
   async create(createUserInput: CreateUserInput) {
     const { name, email, password } = createUserInput;
@@ -37,6 +44,14 @@ export class UserService {
     return tempUser;
   }
 
+  async findOneById(id): Promise<UserEntity> {
+    try {
+      const user = await this.usersRepository.findOne(id);
+
+      return user;
+    } catch (error) {}
+  }
+
   private async checkUserExists(email: string) {
     return await this.usersRepository.findOne({ email });
   }
@@ -61,5 +76,15 @@ export class UserService {
 
   private sendMemberJoinEmail(email: string, signupVerifyToken: string) {
     this.mailService.sendMemberJoinVerification(email, signupVerifyToken);
+  }
+
+  async login(input: LoginInput) {
+    const user = await this.usersRepository.findOne(input);
+
+    if (!user) {
+      throw new NotFoundException('유저가 존재하지 않습니다');
+    }
+
+    return this.authService.login(user);
   }
 }

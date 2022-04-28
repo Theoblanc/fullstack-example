@@ -1,4 +1,5 @@
 import { BaseEntity } from 'src/base/base.entity';
+import { TokenEntity } from 'src/token/entities/token.entity';
 import { Column, Entity } from 'typeorm';
 
 @Entity()
@@ -9,8 +10,8 @@ export class UserEntity extends BaseEntity {
   email: string;
   @Column()
   password: string;
-  @Column()
-  signupVerifyToken: string;
+  @Column(() => TokenEntity)
+  token: TokenEntity;
   @Column()
   image?: string;
 }
