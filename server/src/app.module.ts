@@ -30,6 +30,8 @@ import { TokenEntity } from './token/entities/token.entity';
       synchronize: true,
     }),
     UserModule,
+    AuthModule,
+    TokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

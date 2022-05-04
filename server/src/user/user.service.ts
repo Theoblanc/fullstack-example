@@ -7,9 +7,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/auth.service';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
-import { CreateUserInput } from './dto/create-user.input';
-import { LoginInput } from './dto/login.input';
+import { CreateUserInput } from './input/create-user.input';
+import { LoginInput } from './input/login.input';
+import { UserDTO } from './dto/user.dto';
 import { UserEntity } from './entities/user.entity';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -44,11 +46,11 @@ export class UserService {
     return tempUser;
   }
 
-  async findOneById(id): Promise<UserEntity> {
+  async findOneById(id): Promise<UserDTO> {
     try {
       const user = await this.usersRepository.findOne(id);
 
-      return user;
+      return plainToClass(UserEntity, user);
     } catch (error) {}
   }
 
