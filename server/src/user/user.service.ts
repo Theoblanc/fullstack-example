@@ -12,6 +12,9 @@ import { LoginInput } from './input/login.input';
 import { UserDTO } from './dto/user.dto';
 import { UserEntity } from './entities/user.entity';
 import { plainToClass } from 'class-transformer';
+import { TokenService } from 'src/token/token.service';
+import { TokenType } from 'src/commons/enums/token-type.enum';
+import { LoginReturnDTO } from 'src/auth/dto/login-return.dto';
 
 @Injectable()
 export class UserService {
@@ -20,6 +23,7 @@ export class UserService {
     private usersRepository: Repository<UserEntity>,
     private readonly mailService: MailService,
     private readonly authService: AuthService,
+    private readonly tokenService: TokenService,
   ) {}
   async create(createUserInput: CreateUserInput) {
     const { name, email, password } = createUserInput;
@@ -58,7 +62,7 @@ export class UserService {
     return await this.usersRepository.findOne({ email });
   }
 
-  private async save({
+  async save({
     name,
     email,
     password,
@@ -76,17 +80,30 @@ export class UserService {
     } catch (error) {}
   }
 
+  async updateOne(user: Partial<UserEntity>): Promise<UserEntity> {
+    const updatedUser = await this.usersRepository.update(user.id, { ...user });
+
+    return plainToClass(UserEntity, updatedUser);
+  }
+
   private sendMemberJoinEmail(email: string, signupVerifyToken: string) {
     this.mailService.sendMemberJoinVerification(email, signupVerifyToken);
   }
 
-  async login(input: LoginInput) {
+  async login(input: LoginInput): Promise<LoginReturnDTO> {
     const user = await this.usersRepository.findOne(input);
 
     if (!user) {
       throw new NotFoundException('유저가 존재하지 않습니다');
     }
 
-    return this.authService.login(user);
+    const { accessToken, refreshToken } = this.authService.generateTokens(user);
+
+    this.tokenService.save(refreshToken, TokenType.REFRESH);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 }

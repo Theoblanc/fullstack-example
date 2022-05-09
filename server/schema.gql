@@ -8,10 +8,38 @@ input CreateUserInput {
   password: String!
 }
 
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LoginReturnDTO {
+  accessToken: String!
+  refreshToken: String!
+}
+
 type Mutation {
-  create(createUserInput: CreateUserInput!): String!
+  create(createUserInput: CreateUserInput!): UserDTO!
+  login(input: LoginInput!): LoginReturnDTO!
 }
 
 type Query {
-  isMailer: Boolean!
+  me(id: String!): UserDTO!
+}
+
+type TokenEntity {
+  token: String!
+  type: TokenType!
+}
+
+enum TokenType {
+  ACCESS
+  REFRESH
+  SIGNUP_VERIFY
+}
+
+type UserDTO {
+  email: String!
+  image: String!
+  name: String!
 }

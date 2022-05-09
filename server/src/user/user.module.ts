@@ -5,9 +5,15 @@ import { MailModule } from 'src/mail/mail.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { TokenModule } from 'src/token/token.module';
 
 @Module({
-  imports: [MailModule, AuthModule, TypeOrmModule.forFeature([UserEntity])],
+  imports: [
+    MailModule,
+    AuthModule,
+    TokenModule,
+    TypeOrmModule.forFeature([UserEntity]),
+  ],
   providers: [UserResolver, UserService],
 })
 export class UserModule {}
