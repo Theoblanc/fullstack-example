@@ -4,20 +4,12 @@ import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-export class UsersRepositoryFake {
-  public create(): void {
-    return;
-  }
-  public async save(): Promise<void> {
-    return;
-  }
-  public async remove(): Promise<void> {
-    return;
-  }
-  public async findOne(): Promise<void> {
-    return;
-  }
-}
+const mockUserRepository = () => ({
+  save: jest.fn(),
+  find: jest.fn(),
+  findOne: jest.fn(),
+  softDelete: jest.fn(),
+});
 
 describe('UserService', () => {
   let userService: UserService;
@@ -29,7 +21,7 @@ describe('UserService', () => {
         UserService,
         {
           provide: getRepositoryToken(UserEntity),
-          useClass: UsersRepositoryFake,
+          useValue: mockUserRepository(),
         },
       ],
     }).compile();
@@ -42,11 +34,35 @@ describe('UserService', () => {
     expect(userService).toBeDefined();
   });
 
-  describe('create', () => {});
+  describe('create', () => {
+    it.todo('should fail on exception');
+    it.todo('should create user');
+  });
 
-  describe('FindOneById', () => {});
-  describe('checkUserExists', () => {});
-  describe('save', () => {});
-  describe('sendMemberJoinEmail', () => {});
-  describe('login', () => {});
+  describe('FindOneById', () => {
+    it.todo('should fail on exception');
+    it.todo('should find user');
+  });
+
+  describe('checkUserExists', () => {
+    it.todo('should fail on exception');
+    it.todo('when user exist, return true');
+    it.todo('when user dont exist, return false');
+  });
+
+  describe('save', () => {
+    it.todo('should fail on exception');
+    it.todo('should create user');
+  });
+
+  describe('sendMemberJoinEmail', () => {
+    it.todo('should fail on exception');
+    it.todo('should join email');
+  });
+
+  describe('login', () => {
+    it.todo('should fail on exception (password id wrong)');
+    it.todo('should fail on exception (can not find user)');
+    it.todo('should success, return tokens (access token, refresh token)');
+  });
 });

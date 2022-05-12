@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -18,6 +19,8 @@ import { LoginReturnDTO } from 'src/auth/dto/login-return.dto';
 
 @Injectable()
 export class UserService {
+  private static readonly logger = new Logger(UserService.name);
+
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
