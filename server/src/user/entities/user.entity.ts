@@ -13,7 +13,7 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
   @Column(() => TokenEntity)
-  token: TokenEntity;
+  token?: TokenEntity;
   @Column()
   image?: string;
 }
