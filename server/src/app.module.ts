@@ -6,10 +6,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './user/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { TokenModule } from './token/token.module';
-import { TokenEntity } from './token/entities/token.entity';
 
 @Module({
   imports: [
@@ -26,7 +24,7 @@ import { TokenEntity } from './token/entities/token.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'fullstack',
-      entities: [UserEntity, TokenEntity],
+      autoLoadEntities: true,
       synchronize: true,
     }),
     UserModule,

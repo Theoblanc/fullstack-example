@@ -6,6 +6,13 @@ import { Column, Entity } from 'typeorm';
 @Entity('USER')
 @ObjectType()
 export class UserEntity extends BaseEntity {
+  constructor(name?: string, email?: string, password?: string) {
+    super();
+    this.name = name || '';
+    this.email = email || '';
+    this.password = password || '';
+  }
+
   @Column({ length: 500 })
   name: string;
   @Column()

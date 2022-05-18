@@ -19,15 +19,11 @@ import { LoginReturnDTO } from 'src/auth/dto/login-return.dto';
 
 @Injectable()
 export class UserService {
-  private static readonly logger = new Logger(UserService.name);
-
   constructor(
     @InjectRepository(UserEntity)
-    private usersRepository: Repository<UserEntity>,
-    private readonly mailService: MailService,
-    private readonly authService: AuthService,
-    private readonly tokenService: TokenService,
+    private readonly usersRepository: Repository<UserEntity>,
   ) {}
+
   async create(createUserInput: CreateUserInput) {
     const { name, email, password } = createUserInput;
     const user = await this.checkUserExists(email);
@@ -48,7 +44,7 @@ export class UserService {
       signupVerifyToken,
     });
 
-    this.sendMemberJoinEmail(email, signupVerifyToken);
+    // this.sendMemberJoinEmail(email, signupVerifyToken);
 
     return tempUser;
   }
@@ -89,24 +85,28 @@ export class UserService {
     return plainToClass(UserEntity, updatedUser);
   }
 
-  private sendMemberJoinEmail(email: string, signupVerifyToken: string) {
-    this.mailService.sendMemberJoinVerification(email, signupVerifyToken);
-  }
+  // private sendMemberJoinEmail(email: string, signupVerifyToken: string) {
+  //   this.mailService.sendMemberJoinVerification(email, signupVerifyToken);
+  // }
 
-  async login(input: LoginInput): Promise<LoginReturnDTO> {
-    const user = await this.usersRepository.findOne(input);
+  // async login(input: LoginInput): Promise<LoginReturnDTO> {
+  //   const user = await this.usersRepository.findOne(input);
 
-    if (!user) {
-      throw new NotFoundException('유저가 존재하지 않습니다');
-    }
+  //   if (!user) {
+  //     throw new NotFoundException('유저가 존재하지 않습니다');
+  //   }
 
-    const { accessToken, refreshToken } = this.authService.generateTokens(user);
+  //   const { accessToken, refreshToken } = this.authService.generateTokens(user);
 
-    this.tokenService.save(refreshToken, TokenType.REFRESH);
+  //   this.tokenService.save(refreshToken, TokenType.REFRESH);
 
-    return {
-      accessToken,
-      refreshToken,
-    };
+  //   return {
+  //     accessToken,
+  //     refreshToken,
+  //   };
+  // }
+
+  async sayHi() {
+    return 'HI';
   }
 }

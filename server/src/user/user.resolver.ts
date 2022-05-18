@@ -14,6 +14,11 @@ export class UserResolver {
     return this.userService.findOneById(id);
   }
 
+  @Query(() => String)
+  sayHi(): Promise<string> {
+    return this.userService.sayHi();
+  }
+
   @Mutation(() => UserDTO)
   create(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.userService.create(createUserInput);
@@ -21,6 +26,6 @@ export class UserResolver {
 
   @Mutation(() => LoginReturnDTO)
   login(@Args('input') input: LoginInput) {
-    this.userService.login(input);
+    // this.userService.login(input);
   }
 }
