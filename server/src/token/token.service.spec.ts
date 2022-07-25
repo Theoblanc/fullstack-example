@@ -1,8 +1,7 @@
+import { TokenService } from './token.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { UserEntity } from './entities/user.entity';
-import { UserResolver } from './user.resolver';
-import { UserService } from './user.service';
+import { TokenEntity } from './entities/token.entity';
 
 const mockUserRepository = () => ({
   save: jest.fn(),
@@ -11,25 +10,24 @@ const mockUserRepository = () => ({
   softDelete: jest.fn(),
 });
 
-describe('UserResolver', () => {
-  let resolver: UserResolver;
+describe('TokenService', () => {
+  let tokenService: TokenService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UserResolver,
-        UserService,
+        TokenService,
         {
-          provide: getRepositoryToken(UserEntity),
+          provide: getRepositoryToken(TokenEntity),
           useValue: mockUserRepository(),
         },
       ],
     }).compile();
 
-    resolver = module.get<UserResolver>(UserResolver);
+    tokenService = module.get<TokenService>(TokenService);
   });
 
   it('should be defined', () => {
-    expect(resolver).toBeDefined();
+    expect(tokenService).toBeDefined();
   });
 });

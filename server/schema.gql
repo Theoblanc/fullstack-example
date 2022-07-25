@@ -19,13 +19,12 @@ type LoginReturnDTO {
 }
 
 type Mutation {
-  create(createUserInput: CreateUserInput!): UserDTO!
   login(input: LoginInput!): LoginReturnDTO!
+  signUp(createUserInput: CreateUserInput!): UserDTO!
 }
 
 type Query {
   me(id: String!): UserDTO!
-  sayHi: String!
 }
 
 type TokenEntity {

@@ -1,15 +1,8 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { MockRepository } from 'src/commons/types/repository';
 import { UserEntity } from './entities/user.entity';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { MailService } from 'src/mail/mail.service';
-import { AuthService } from 'src/auth/auth.service';
-import { TokenService } from 'src/token/token.service';
-
-import { TokenEntity } from 'src/token/entities/token.entity';
-import { JwtService } from '@nestjs/jwt';
-import { Connection } from 'typeorm';
-import { UserModule } from './user.module';
 import { UserService } from './user.service';
 
 const testUser1 = {
@@ -19,6 +12,13 @@ const testUser1 = {
 };
 
 const testUser2 = {
+  name: 'test2',
+  email: 'test2@email.com',
+  password: 'test2Password',
+};
+
+const testUser3 = {
+  id: 3,
   name: 'test2',
   email: 'test2@email.com',
   password: 'test2Password',
@@ -36,14 +36,15 @@ const arrayUser = [
 ];
 
 const mockUserRepository = () => ({
-  save: jest.fn().mockResolvedValue(oneUser),
-  find: jest.fn().mockResolvedValue(arrayUser),
-  findOne: jest.fn().mockResolvedValue(oneUser),
-  softDelete: jest.fn().mockResolvedValue(oneUser),
+  save: jest.fn(),
+  find: jest.fn(),
+  findOne: jest.fn(),
+  softDelete: jest.fn(),
 });
 
 describe('UserService', () => {
   let userService: UserService;
+  let userRepository: MockRepository<UserEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -57,63 +58,62 @@ describe('UserService', () => {
     }).compile();
 
     userService = module.get<UserService>(UserService);
+    userRepository = module.get<MockRepository<UserEntity>>(
+      getRepositoryToken(UserEntity),
+    );
   });
 
   it('should be defined', () => {
     expect(userService).toBeDefined();
   });
 
-  describe('HI', () => {
-    const HI = userService.sayHi();
-    expect('HI').toBe(HI);
-  });
-
-  // describe('create', () => {
-  //   // Given
-  //   const name = 'TEST';
-  //   const email = 'test@naver.com';
-  //   const password = 'password';
-  //   // When
-  //   const user = userService.create({
-  //     name: 'TEST',
-  //     email: 'test@naver.com',
-  //     password: 'password',
-  //   });
-
-  //   // Then
-  //   const expected = new UserEntity();
-  //   expected.name = name;
-  //   expected.email = email;
-  //   expected.password = password;
-
-  //   expect(expected).toEqual(user);
-  //   expect(expected).toBeCalledTimes(1);
-  // });
-
-  describe('FindOneById', () => {
-    it.todo('should fail on exception');
-    it.todo('should find user');
-  });
-
-  describe('checkUserExists', () => {
-    it.todo('should fail on exception');
-    it.todo('when user exist, return true');
-    it.todo('when user dont exist, return false');
-  });
-
   describe('save', () => {
-    it.todo('should fail on exception');
-    it.todo('should create user');
+    it('return user entity', async () => {
+      userRepository.save.mockResolvedValue(oneUser);
+      const user = await userService.save(testUser1);
+      expect(userRepository.save).toHaveBeenCalledTimes(1);
+      expect(user).toEqual(testUser1);
+    });
+
+    it('should fail on exception', async () => {
+      userRepository.save.mockRejectedValue(() => {
+        throw new BadRequestException("can't save user in db");
+      });
+
+      expect(
+        async () => await userService.save(testUser1),
+      ).rejects.toThrowError(new BadRequestException("can't save user in db"));
+
+      expect(userRepository.save).toHaveBeenCalledTimes(1);
+    });
   });
 
-  describe('sendMemberJoinEmail', () => {
-    it.todo('should fail on exception');
-    it.todo('should join email');
+  describe('findOne', () => {
+    it('should return user by id', async () => {
+      userRepository.findOne.mockResolvedValue(oneUser);
+
+      const user = await userService.findOne(1);
+
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(user).toEqual(testUser1);
+    });
+    it.todo('should return user by email');
+    it('if user is not exist, return null', async () => {
+      userRepository.findOne.mockResolvedValue(null);
+
+      const user = await userService.findOne(5);
+
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(user).toBeNull();
+    });
   });
 
-  describe('login', () => {
-    it.todo('should fail on exception (password id wrong)');
-    it.todo('should fail on exception (can not find user)');
-    it.todo('should success, return tokens (access token, refresh token)');
+  describe('sing up', () => {
+    it('should return temp user', async () => {
+      userRepository.findOne = jest.fn().mockResolvedValue(null);
+
+      jest.spyOn(userService, 'signUp').mockImplementation(async () => oneUser);
+      expect(await userService.signUp(testUser1)).toEqual(oneUser);
+    });
   });
 });

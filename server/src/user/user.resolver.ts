@@ -11,17 +11,12 @@ export class UserResolver {
 
   @Query(() => UserDTO)
   me(@Args('id', { type: () => String }) id: string): Promise<UserDTO> {
-    return this.userService.findOneById(id);
-  }
-
-  @Query(() => String)
-  sayHi(): Promise<string> {
-    return this.userService.sayHi();
+    return this.userService.findOne(id);
   }
 
   @Mutation(() => UserDTO)
-  create(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.userService.create(createUserInput);
+  signUp(@Args('createUserInput') createUserInput: CreateUserInput) {
+    return this.userService.signUp(createUserInput);
   }
 
   @Mutation(() => LoginReturnDTO)
