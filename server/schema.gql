@@ -8,6 +8,20 @@ input CreateUserInput {
   password: String!
 }
 
+type FileDTO {
+  height: Float!
+  name: String!
+  url: String!
+  weight: Float!
+}
+
+type FileEntity {
+  height: Float!
+  name: String!
+  url: String!
+  weight: Float!
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -40,6 +54,6 @@ enum TokenType {
 
 type UserDTO {
   email: String!
-  image: String!
+  image: FileDTO!
   name: String!
 }

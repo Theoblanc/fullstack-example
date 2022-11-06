@@ -8,6 +8,10 @@ import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { TokenModule } from './token/token.module';
+import { FileModule } from './file/file.module';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
@@ -30,6 +34,7 @@ import { TokenModule } from './token/token.module';
     UserModule,
     AuthModule,
     TokenModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

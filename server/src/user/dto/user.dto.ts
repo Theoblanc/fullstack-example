@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { FileDTO } from 'src/file/dto/file.dto';
 
 @ObjectType()
 export class UserDTO {
@@ -6,6 +7,6 @@ export class UserDTO {
   name: string;
   @Field(() => String)
   email: string;
-  @Field(() => String)
-  image?: string;
+  @Field(() => FileDTO)
+  image?: FileDTO;
 }
