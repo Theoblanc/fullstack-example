@@ -7,10 +7,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { AuthService } from 'src/auth/auth.service';
-import { TokenType } from 'src/commons/enums/token-type.enum';
 import { TokenService } from 'src/token/token.service';
-import { Repository } from 'typeorm';
-import { UserDTO } from './dto/user.dto';
+import { FindConditions, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { CreateUserInput } from './input/create-user.input';
 
@@ -28,10 +26,8 @@ export class UserService {
 
   async save(properties: Partial<UserEntity>): Promise<UserEntity> {
     try {
-      console.log('properties', properties);
       const user = await this.userRepository.save(properties);
-      console.log('user', user);
-      return plainToClass(UserEntity, user);
+      return user;
     } catch (error) {
       console.log(error);
       throw new BadRequestException("can't save user in db");
@@ -40,9 +36,23 @@ export class UserService {
 
   //BUSINESS
 
-  async findOne(option) {
-    const user = await this.userRepository.findOne(option);
-    return user;
+  async findOne(
+    option: FindConditions<UserEntity>,
+  ): Promise<UserEntity> | null {
+    try {
+      const user = await this.userRepository.findOne(option);
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async update(criteria: FindConditions<UserEntity>, partialEntity) {
+    try {
+      await this.userRepository.update(criteria, partialEntity);
+    } catch (error) {
+      console.log('updateError', error);
+    }
   }
 
   async signUp(input: CreateUserInput): Promise<UserEntity> {

@@ -11,7 +11,5 @@ registerEnumType(TokenType, {
 @ObjectType()
 export class TokenEntity extends BaseEntity {
   @Column()
-  type: TokenType;
-  @Column()
   token: string;
 }

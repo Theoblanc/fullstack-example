@@ -11,8 +11,17 @@ export class TokenService {
     private tokenRepository: Repository<TokenEntity>,
   ) {}
 
-  async save(token: string, type: TokenType) {
-    const createdToken = await this.tokenRepository.create({ token, type });
-    return createdToken;
+  async save(properties: Partial<TokenEntity>) {
+    try {
+      const createdToken = await this.tokenRepository.save(properties);
+      console.log('createdToken', createdToken);
+      return createdToken;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async find() {
+    return await this.tokenRepository.find();
   }
 }

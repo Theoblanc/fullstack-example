@@ -16,6 +16,9 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
+  @Column({ default: false })
+  emailVertified: boolean;
+
   @OneToOne(() => TokenEntity)
   @JoinColumn()
   token: TokenEntity;

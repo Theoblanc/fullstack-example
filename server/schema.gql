@@ -22,38 +22,41 @@ type FileEntity {
   weight: Float!
 }
 
+type LoginDTO {
+  accessToken: String!
+  refreshToken: String!
+}
+
 input LoginInput {
   email: String!
   password: String!
 }
 
-type LoginReturnDTO {
-  accessToken: String!
-  refreshToken: String!
-}
-
 type Mutation {
-  login(input: LoginInput!): LoginReturnDTO!
+  login(input: LoginInput!): LoginDTO!
   signUp(createUserInput: CreateUserInput!): UserDTO!
 }
 
 type Query {
+  authHi: String!
   me(id: String!): UserDTO!
 }
 
 type TokenEntity {
   token: String!
-  type: TokenType!
-}
-
-enum TokenType {
-  ACCESS
-  REFRESH
-  SIGNUP_VERIFY
 }
 
 type UserDTO {
   email: String!
   image: FileDTO!
   name: String!
+}
+
+type UserEntity {
+  email: String!
+  emailVertified: Boolean!
+  image: FileEntity!
+  name: String!
+  password: String!
+  token: TokenEntity!
 }

@@ -1,29 +1,51 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserEntity } from 'src/user/entities/user.entity';
+import { TokenService } from 'src/token/token.service';
 import { UserService } from 'src/user/user.service';
-import { LoginReturnDTO } from './dto/login-return.dto';
+import { LoginInput } from './input/login.input';
+import { LoginDTO } from './dto/login-return.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(forwardRef(() => UserService))
     private readonly usersService: UserService,
+    private readonly tokenService: TokenService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
+  async validateUser(name: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOne({ name });
     if (user && user.password === pass) {
       return user;
     }
     return null;
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+  async login(input: LoginInput): Promise<LoginDTO> {
+    const user = await this.usersService.findOne(input);
+
+    if (!user) {
+      //
+      throw Error('error');
+    }
+
+    const payload = {
+      username: user.name,
+      sub: user.id,
+    };
+
+    const accessToken = await this.jwtService.sign({ payload });
+
+    const token = await this.tokenService.save({
+      token: this.jwtService.sign({ payload }),
+    });
+
+    await this.usersService.update({ id: user.id }, { token: token.id });
+
     return {
-      access_token: this.jwtService.sign(payload),
+      refreshToken: token?.token,
+      accessToken,
     };
   }
 

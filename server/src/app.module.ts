@@ -9,9 +9,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { TokenModule } from './token/token.module';
 import { FileModule } from './file/file.module';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { AuthService } from './auth/auth.service';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -20,6 +19,8 @@ import { AuthService } from './auth/auth.service';
       autoSchemaFile: join(process.cwd(), 'schema.gql'),
       sortSchema: true,
       path: '/api/graphql',
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -35,6 +36,7 @@ import { AuthService } from './auth/auth.service';
     AuthModule,
     TokenModule,
     FileModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],
