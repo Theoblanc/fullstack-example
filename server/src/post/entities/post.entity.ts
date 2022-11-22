@@ -7,7 +7,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
 @ObjectType()
 export class PostEntity extends BaseEntity {
   @Column()
-  text: string;
+  content: string;
 
   @Column()
   likes: number;

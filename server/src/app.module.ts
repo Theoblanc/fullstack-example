@@ -11,6 +11,7 @@ import { TokenModule } from './token/token.module';
 import { FileModule } from './file/file.module';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { PostModule } from './post/post.module';
+import { FollowerModule } from './follower/follower.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { PostModule } from './post/post.module';
     TokenModule,
     FileModule,
     PostModule,
+    FollowerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

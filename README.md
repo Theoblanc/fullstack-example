@@ -17,7 +17,7 @@ This is a project that implements basic functions using nest.js.
 
 - [ ] Auth
 - [x] Sign Up
-- [ ] Email Login
+- [x] Email Login
 - [ ] Social Login
 - [ ] Withdrawal Account
 
@@ -27,6 +27,10 @@ This is a project that implements basic functions using nest.js.
 - [ ] Image Uploads
 - [ ] Favourites
 - [ ] Reviews
+
+### FOLLOWERS
+
+- [ ] Follow user
 
 <!-- Stack Icon Refernces -->
 

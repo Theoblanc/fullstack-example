@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 import { AuthService } from 'src/auth/auth.service';
-import { TokenService } from 'src/token/token.service';
 import { FindConditions, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { CreateUserInput } from './input/create-user.input';
@@ -19,7 +18,6 @@ export class UserService {
     private userRepository: Repository<UserEntity>,
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
-    private tokenService: TokenService,
   ) {}
 
   // RESPOITROY
@@ -64,18 +62,6 @@ export class UserService {
     if (user) {
       throw new BadRequestException('User already exist');
     }
-
-    // const generatedToken = await this.authService.generate(user);
-
-    // const token = await this.tokenService.save(
-    //   generatedToken,
-    //   TokenType.SIGNUP_VERIFY,
-    // );
-
-    // 이메일 보내기
-
-    console.log(user);
-    console.log(input);
 
     user = await this.save(input);
 
